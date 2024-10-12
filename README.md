@@ -69,7 +69,7 @@ Open your web browser and navigate to http://localhost:5000.
 Enter the Reddit post URL or subreddit you wish to analyze.
 View the resulting sentiment analysis and visualizations.
 ## Deployment
-The application is deployed on Render. You can access it [here](https://reddit-sentiment-analysis-pyip.onrender.com).
+The application is deployed on Render. You can access it [here](https://reddit-sentiment-analysis-pyip.onrender.com/).
 
 ## Contributing
 Contributions are welcome! If you'd like to contribute to this project, please follow these steps:
