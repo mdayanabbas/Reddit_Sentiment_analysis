@@ -1,5 +1,5 @@
 # main.py
-import praw
+import asyncpraw
 from textblob import TextBlob
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 import pandas as pd
@@ -25,21 +25,26 @@ load_dotenv()
 # Initialize FastAPI
 app = FastAPI()
 
-# Initialize Reddit API client
-reddit = praw.Reddit(client_id="_oxIeTUuyDiPRWzq-qeVZQ",         # your client id
-    client_secret="bcJjNvJ-2Bt0E82IeqdoLWnlx5U_KQ",      # your client secret
-    user_agent="Abbas")        # your user agent
+@app.on_event("startup")
+async def startup_event():
+    global reddit
+    reddit = asyncpraw.Reddit(client_id="_oxIeTUuyDiPRWzq-qeVZQ",
+                              client_secret="bcJjNvJ-2Bt0E82IeqdoLWnlx5U_KQ",
+                              user_agent="Abbas")
 
+@app.on_event("shutdown")
+async def shutdown_event():
+    await reddit.close()
 
 async def collect_reddit_data(subreddit_name: str, limit: int = 2000) -> List[dict]:
-    subreddit = reddit.subreddit(subreddit_name)
+    subreddit = await reddit.subreddit(subreddit_name)
     posts = []
     
     # Collect from different time periods to get more posts
     time_filters = ['day', 'week', 'month', 'year']
     
     for time_filter in time_filters:
-        for post in subreddit.top(time_filter=time_filter, limit=limit//len(time_filters)):
+        async for post in subreddit.top(time_filter=time_filter, limit=limit//len(time_filters)):
             posts.append({
                 'title': post.title,
                 'text': post.selftext,
@@ -49,6 +54,7 @@ async def collect_reddit_data(subreddit_name: str, limit: int = 2000) -> List[di
             })
     
     return posts
+
 
 def analyze_sentiment(text: str) -> Dict:
     blob = TextBlob(text)
