@@ -1,4 +1,3 @@
-# main.py
 import asyncpraw
 from textblob import TextBlob
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
@@ -14,8 +13,10 @@ from datetime import datetime, timedelta
 import numpy as np
 from wordcloud import WordCloud
 import base64
+import logging
 from io import BytesIO
 import nltk
+from fastapi import Request
 from typing import List, Dict
 from dotenv import load_dotenv
 
@@ -166,6 +167,16 @@ async def analyze_subreddit(subreddit: str, limit: int = 2000):
     
     return stats
 
+logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger(__name__)
+
+@app.exception_handler(Exception)
+async def general_exception_handler(request: Request, exc: Exception):
+    logger.error(f"An error occurred: {exc}", exc_info=True)
+    return JSONResponse(
+        status_code=500,
+        content={"message": "An internal error occurred", "error": str(exc)}
+    )
 @app.get("/", response_class=HTMLResponse)
 async def get_html():
     return """
