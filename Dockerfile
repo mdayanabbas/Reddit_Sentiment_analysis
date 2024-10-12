@@ -13,8 +13,9 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy the project files into the container
 COPY . .
 
-# Expose the port
+# Expose port 80 for the application
 EXPOSE 80
 
-# Run the command to start the application
-CMD ["python", "app.py"]
+# Run the application using uvicorn, which is recommended for async frameworks like FastAPI
+# If using Flask, you can switch this to ["python", "app.py"] and ensure app.py runs on port 80
+CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "80"]
