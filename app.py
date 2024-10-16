@@ -29,9 +29,9 @@ app = FastAPI()
 @app.on_event("startup")
 async def startup_event():
     global reddit
-    reddit = asyncpraw.Reddit(client_id="_oxIeTUuyDiPRWzq-qeVZQ",
-                              client_secret="bcJjNvJ-2Bt0E82IeqdoLWnlx5U_KQ",
-                              user_agent="Abbas")
+    reddit = asyncpraw.Reddit(client_id="",               # your client ID
+                              client_secret="",       #your client secret
+                              user_agent="")           #your user agent
 
 @app.on_event("shutdown")
 async def shutdown_event():
